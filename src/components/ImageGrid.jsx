@@ -1,6 +1,15 @@
 import ImageCard from "./ImageCard";
 
-const ImageGrid = ({ images, onRemove, onRename, onPreview }) => {
+const ImageGrid = ({
+  images,
+  onRemove,
+  onRename,
+  onPreview,
+  onToggleFavorite,
+  onRestore,
+  onPermanentDelete,
+  isDeletedView,
+}) => {
   if (images.length === 0) return null;
 
   return (
@@ -21,6 +30,10 @@ const ImageGrid = ({ images, onRemove, onRename, onPreview }) => {
             onRemove={onRemove}
             onRename={onRename}
             onPreview={onPreview}
+            onToggleFavorite={onToggleFavorite}
+            onRestore={onRestore}
+            onPermanentDelete={onPermanentDelete}
+            isDeletedView={isDeletedView}
           />
         ))}
       </div>

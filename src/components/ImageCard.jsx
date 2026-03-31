@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from "react";
-import { Eye, Pencil, Trash2, Check, X } from "lucide-react";
+import { Eye, Pencil, Trash2, Check, X, Star, RotateCcw } from "lucide-react";
 
 const formatSize = (bytes) => {
   if (bytes < 1024) return `${bytes} B`;
@@ -7,7 +7,16 @@ const formatSize = (bytes) => {
   return `${(bytes / 1024 / 1024).toFixed(2)} MB`;
 };
 
-const ImageCard = ({ image, onRemove, onRename, onPreview }) => {
+const ImageCard = ({
+  image,
+  onRemove,
+  onRename,
+  onPreview,
+  onToggleFavorite,
+  onRestore,
+  onPermanentDelete,
+  isDeletedView,
+}) => {
   const [isEditing, setIsEditing] = useState(false);
   const [editName, setEditName] = useState(image.name);
   const inputRef = useRef(null);
@@ -98,27 +107,62 @@ const ImageCard = ({ image, onRemove, onRename, onPreview }) => {
       </p>
 
       <div className="flex items-center gap-0.5 opacity-0 group-hover:opacity-100 transition-opacity">
-        <button
-          onClick={() => onPreview(image)}
-          className="p-1.5 text-slate-400 hover:text-blue-400 hover:bg-blue-400/10 rounded-md transition-colors"
-          title="Preview"
-        >
-          <Eye className="w-4 h-4" />
-        </button>
-        <button
-          onClick={() => setIsEditing(true)}
-          className="p-1.5 text-slate-400 hover:text-amber-400 hover:bg-amber-400/10 rounded-md transition-colors"
-          title="Rename"
-        >
-          <Pencil className="w-4 h-4" />
-        </button>
-        <button
-          onClick={() => onRemove(image.id)}
-          className="p-1.5 text-slate-400 hover:text-red-400 hover:bg-red-400/10 rounded-md transition-colors"
-          title="Delete"
-        >
-          <Trash2 className="w-4 h-4" />
-        </button>
+        {isDeletedView ? (
+          <>
+            <button
+              onClick={() => onRestore(image.id)}
+              className="p-1.5 text-slate-400 hover:text-emerald-400 hover:bg-emerald-400/10 rounded-md transition-colors"
+              title="Restore"
+            >
+              <RotateCcw className="w-4 h-4" />
+            </button>
+            <button
+              onClick={() => onPermanentDelete(image.id)}
+              className="p-1.5 text-slate-400 hover:text-red-400 hover:bg-red-400/10 rounded-md transition-colors"
+              title="Delete permanently"
+            >
+              <Trash2 className="w-4 h-4" />
+            </button>
+          </>
+        ) : (
+          <>
+            <button
+              onClick={() => onPreview(image)}
+              className="p-1.5 text-slate-400 hover:text-blue-400 hover:bg-blue-400/10 rounded-md transition-colors"
+              title="Preview"
+            >
+              <Eye className="w-4 h-4" />
+            </button>
+            <button
+              onClick={() => onToggleFavorite(image.id)}
+              className={`p-1.5 rounded-md transition-colors ${
+                image.favorite
+                  ? "text-amber-400 hover:text-amber-300"
+                  : "text-slate-400 hover:text-amber-400 hover:bg-amber-400/10"
+              }`}
+              title={image.favorite ? "Unfavorite" : "Favorite"}
+            >
+              <Star
+                className="w-4 h-4"
+                fill={image.favorite ? "currentColor" : "none"}
+              />
+            </button>
+            <button
+              onClick={() => setIsEditing(true)}
+              className="p-1.5 text-slate-400 hover:text-amber-400 hover:bg-amber-400/10 rounded-md transition-colors"
+              title="Rename"
+            >
+              <Pencil className="w-4 h-4" />
+            </button>
+            <button
+              onClick={() => onRemove(image.id)}
+              className="p-1.5 text-slate-400 hover:text-red-400 hover:bg-red-400/10 rounded-md transition-colors"
+              title="Delete"
+            >
+              <Trash2 className="w-4 h-4" />
+            </button>
+          </>
+        )}
       </div>
     </div>
   );
